@@ -1,0 +1,12 @@
+if TARGET_OMAP4_EMBT2WS
+
+config SYS_BOARD
+	default "embt2ws"
+
+config SYS_VENDOR
+	default "epson"
+
+config SYS_CONFIG_NAME
+	default "omap4_embt2ws"
+
+endif
