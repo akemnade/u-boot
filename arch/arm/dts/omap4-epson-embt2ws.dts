@@ -5,7 +5,6 @@
 /dts-v1/;
 
 #include "omap4460.dtsi"
-#include "omap4-panda-common.dtsi"
 
 / {
 	model = "Epson Moverio BT-200";
@@ -59,6 +58,21 @@
 			OMAP4_IOPAD(0x130, PIN_INPUT | MUX_MODE0)	/* i2c4_sda */
 		>;
 	};		
+
+	uart3_pins: pinmux_uart3_pins {
+		pinctrl-single,pins = <
+			OMAP4_IOPAD(0x144, PIN_INPUT | MUX_MODE0)               /* uart3_rx_irrx */
+			OMAP4_IOPAD(0x146, PIN_OUTPUT | MUX_MODE0)              /* uart3_tx_irtx */
+                >;
+        };
+
+	usb_otg_hs_pins: pinmux_usb_otg_hs_pins {
+		pinctrl-single,pins = <
+			OMAP4_IOPAD(0x194, PIN_OUTPUT_PULLDOWN | MUX_MODE0)     /* usba0_otg_ce */
+			OMAP4_IOPAD(0x196, PIN_INPUT | MUX_MODE0)               /* usba0_otg_dp */
+			OMAP4_IOPAD(0x198, PIN_INPUT | MUX_MODE0)               /* usba0_otg_dm */
+		>;
+	};
 };
 
 &i2c1 {
@@ -76,6 +90,11 @@
 
 #include "twl6030.dtsi"
 #include "twl6030_omap4.dtsi"
+
+&twl_usb_comparator {
+        usb-supply = <&vusb>;
+};
+
 
 &i2c2 {
 	pinctrl-names = "default";
@@ -124,8 +143,18 @@
 };
 
 &uart3 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart3_pins>;
 	interrupts-extended = <&wakeupgen GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH
 			       &omap4_pmx_core OMAP4_UART3_RX>;
 };
 
+&usb_otg_hs {
+	pinctrl-names = "default";
+	pinctrl-0 = <&usb_otg_hs_pins>;
+
+	interface-type = <1>;
+	mode = <3>;
+	power = <50>;
+};
 
