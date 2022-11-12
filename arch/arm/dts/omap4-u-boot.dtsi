@@ -37,3 +37,13 @@
 		};
 	};
 };
+
+&l4_wkup {
+        segment@10000 {
+
+		/* WDT */
+                target-module@4000 {
+			compatible = "simple-bus";
+		};
+	};
+};
