@@ -17,6 +17,13 @@
 			compatible = "simple-bus";
 		};
 	};
+
+	segment@80000 {
+                target-module@2b000 {
+			compatible = "simple-bus";
+		};
+	};
+
 };
 
 &l4_per {
@@ -33,6 +40,11 @@
 
 		/* MMC1 */
 		target-module@9c000 {
+			compatible = "simple-bus";
+		};
+
+		/* MMC2 */
+		target-module@b4000 {
 			compatible = "simple-bus";
 		};
 	};
