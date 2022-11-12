@@ -46,6 +46,13 @@ static inline void omap2430_low_level_init(struct musb *musb)
 	musb_writel(musb->mregs, OTG_FORCESTDBY, l);
 }
 
+int dm_usb_gadget_handle_interrupts(struct udevice *dev)
+{
+
+	struct musb_host_data *host = dev_get_priv(dev);
+	host->host->isr(0, host->host);
+        return 0;
+}
 
 static int omap2430_musb_init(struct musb *musb)
 {
@@ -214,22 +221,21 @@ static int omap2430_musb_of_to_plat(struct udevice *dev)
 
 static int omap2430_musb_probe(struct udevice *dev)
 {
-#ifdef CONFIG_USB_MUSB_HOST
 	struct musb_host_data *host = dev_get_priv(dev);
-#else
-	struct musb *musbp;
-#endif
+
 	struct omap2430_musb_plat *plat = dev_get_plat(dev);
+#ifdef CONFIG_USB_MUSB_HOST
 	struct usb_bus_priv *priv = dev_get_uclass_priv(dev);
+#endif
 	struct omap_musb_board_data *otg_board_data;
 	int ret = 0;
 	void *base = dev_read_addr_ptr(dev);
 
-	priv->desc_before_addr = true;
 
 	otg_board_data = &plat->otg_board_data;
 
 #ifdef CONFIG_USB_MUSB_HOST
+	priv->desc_before_addr = true;
 	host->host = musb_init_controller(&plat->plat,
 					  (struct device *)otg_board_data,
 					  plat->base);
@@ -237,14 +243,18 @@ static int omap2430_musb_probe(struct udevice *dev)
 		return -EIO;
 	}
 
-	ret = musb_lowlevel_init(host);
+	return musb_lowlevel_init(host);
 #else
-	musbp = musb_register(&plat->plat, (struct device *)otg_board_data,
-			      plat->base);
-	if (IS_ERR_OR_NULL(musbp))
-		return -EINVAL;
+	plat->plat.mode = MUSB_PERIPHERAL;
+	host->host = musb_init_controller(&plat->plat,
+					  (struct device *)otg_board_data,
+					  plat->base);
+	if (!host->host)
+		return -EIO;
+
+	return usb_add_gadget_udc((struct device *)otg_board_data, &host->host->g);
+
 #endif
-	return ret;
 }
 
 static int omap2430_musb_remove(struct udevice *dev)
