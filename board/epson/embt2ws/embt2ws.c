@@ -58,7 +58,7 @@ static const struct emif_regs emif_regs = {
         .zq_config                      = 0xD00B3215,
         .temp_alert_config              = 0x58016893,
         .emif_ddr_phy_ctlr_1_init       = 0x049ffff5, //?
-        .emif_ddr_phy_ctlr_1            = 0x049FF418
+        .emif_ddr_phy_ctlr_1            = 0x049FF408
 };
 
 static const struct dmm_lisa_map_regs lisa_map = {

@@ -182,8 +182,8 @@ void emif_update_timings(u32 base, const struct emif_regs *regs)
 		/* ES1 bug EMIF should be in force idle during freq_update */
 		writel(0, &emif->emif_pwr_mgmt_ctrl);
 	} else {
-		writel(EMIF_PWR_MGMT_CTRL, &emif->emif_pwr_mgmt_ctrl);
-		writel(EMIF_PWR_MGMT_CTRL_SHDW, &emif->emif_pwr_mgmt_ctrl_shdw);
+		writel(0, &emif->emif_pwr_mgmt_ctrl);
+		writel(0, &emif->emif_pwr_mgmt_ctrl_shdw);
 	}
 	writel(regs->read_idle_ctrl, &emif->emif_read_idlectrl_shdw);
 	writel(regs->zq_config, &emif->emif_zq_config);
