@@ -626,6 +626,13 @@ static int acm_stdio_start(struct stdio_dev *dev)
 		return 0;
 	}
 
+	ret = usb_gadget_initialize(0);
+	if (ret) {
+		pr_err("USB init failed: %d\n", ret);
+		return ret;
+	}
+
+	g_dnl_clear_detach();
 	ret = g_dnl_register("usb_serial_acm");
 	if (ret)
 		return ret;
@@ -649,6 +656,7 @@ static int acm_stdio_stop(struct stdio_dev *dev)
 {
 	g_dnl_unregister();
 	g_dnl_clear_detach();
+	usb_gadget_release(0);
 
 	return 0;
 }
