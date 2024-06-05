@@ -89,17 +89,20 @@ void twl6030_stop_usb_charging(void)
 void twl6030_start_usb_charging(void)
 {
 	twl6030_i2c_write_u8(TWL6030_CHIP_CHARGER,
-			     CHARGERUSB_VICHRG, CHARGERUSB_VICHRG_1500);
+			     CHARGERUSB_VICHRG, CHARGERUSB_VICHRG_500);
 	twl6030_i2c_write_u8(TWL6030_CHIP_CHARGER,
 			     CHARGERUSB_CINLIMIT, CHARGERUSB_CIN_LIMIT_NONE);
 	twl6030_i2c_write_u8(TWL6030_CHIP_CHARGER,
 			     CONTROLLER_INT_MASK, MBAT_TEMP);
 	twl6030_i2c_write_u8(TWL6030_CHIP_CHARGER,
+			     CONTROLLER_WDG, 0xff);
+
+	twl6030_i2c_write_u8(TWL6030_CHIP_CHARGER,
 			     CHARGERUSB_INT_MASK, MASK_MCHARGERUSB_THMREG);
 	twl6030_i2c_write_u8(TWL6030_CHIP_CHARGER,
 			     CHARGERUSB_VOREG, CHARGERUSB_VOREG_4P0);
 	twl6030_i2c_write_u8(TWL6030_CHIP_CHARGER,
-			     CHARGERUSB_CTRL2, CHARGERUSB_CTRL2_VITERM_400);
+			     CHARGERUSB_CTRL2, CHARGERUSB_CTRL2_VITERM_100);
 	twl6030_i2c_write_u8(TWL6030_CHIP_CHARGER, CHARGERUSB_CTRL1, TERM);
 	/* Enable USB charging */
 	twl6030_i2c_write_u8(TWL6030_CHIP_CHARGER,
@@ -206,6 +209,8 @@ void twl6030_init_battery_charging(void)
 	if (battery_volt < 0)
 		return;
 
+	printf("battery: %d\n", battery_volt);
+
 	if (battery_volt < 3000)
 		printf("Main battery voltage too low!\n");
 
@@ -213,7 +218,7 @@ void twl6030_init_battery_charging(void)
 	twl6030_i2c_read_u8(TWL6030_CHIP_CHARGER, CONTROLLER_STAT1, &val);
 
 	/* check for battery presence indirectly via Fuel gauge */
-	if ((val & VBUS_DET) && (battery_volt < 3300))
+	if ((val & VBUS_DET) && (battery_volt < 3900))
 		twl6030_start_usb_charging();
 
 	return;

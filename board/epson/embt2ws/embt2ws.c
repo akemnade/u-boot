@@ -121,6 +121,9 @@ void set_muxconf_regs(void)
 
 int misc_init_r(void)
 {
+#ifdef CONFIG_TWL6030_POWER
+        twl6030_init_battery_charging();
+#endif
 	return 0;
 }
 #if defined(CONFIG_MMC)
